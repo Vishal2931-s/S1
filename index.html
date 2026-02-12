@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Examination Results Portal</title>
+    <title>University Examination Results</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
         
-        /* Phase 1: University Portal */
-        #portal {
+        /* Section 1: The Fake University Page */
+        #exam-page {
             background-color: #f4f4f4;
             display: flex;
             flex-direction: column;
@@ -17,17 +17,12 @@
             height: 100vh;
             text-align: center;
         }
-        .login-box {
-            background: white;
-            padding: 30px;
-            border-top: 5px solid #003366;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 320px;
-        }
-        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
-        button { background: #003366; color: white; border: none; padding: 10px 20px; cursor: pointer; width: 100%; }
+        .header { background: #003366; color: white; width: 100%; padding: 20px 0; position: absolute; top: 0; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 300px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #003366; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; width: 100%; }
 
-        /* Phase 2: White Screen */
+        /* Section 2: The White Screen */
         #white-screen {
             display: none;
             background: white;
@@ -38,124 +33,114 @@
             top: 0; z-index: 10;
         }
 
-        /* Phase 3: Rose Rain */
-        #canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 20; }
-
-        /* Phase 4: Final Message */
-        #final-message {
+        /* Section 3: Rose Rain */
+        #rose-container {
             display: none;
             position: absolute;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: #fff0f5;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            z-index: 20;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .rose {
+            position: absolute;
+            font-size: 30px;
+            user-select: none;
+            top: -50px;
+            animation: fall linear forwards;
+        }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        /* Section 4: The Final Reveal */
+        #final-reveal {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            z-index: 30;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 30;
-            text-align: center;
-            animation: fadeIn 2s;
+            animation: explode 0.8s ease-out;
+        }
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
         .couple-img {
-            width: 300px; height: 300px;
-            border-radius: 50%;
-            border: 8px solid #ff4d4d;
-            object-fit: cover;
-            box-shadow: 0 0 20px rgba(255, 77, 77, 0.5);
+            width: 300px;
+            border: 10px solid white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
         }
-        .romantic-text {
-            font-family: 'Georgia', serif;
+        .message {
+            text-align: center;
             color: #d63384;
-            font-size: 2.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            margin-top: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
-        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+        .message h1 { font-size: 3rem; margin: 0; font-family: 'Georgia', serif; }
+        .message p { font-size: 1.5rem; font-weight: bold; }
+        .hearts { font-size: 2rem; }
     </style>
 </head>
 <body>
 
-    <div id="portal">
+    <div id="exam-page">
+        <div class="header">
+            <h2>STATE TECHNICAL UNIVERSITY</h2>
+            <p>Examination Results Portal - Feb 2026</p>
+        </div>
         <div class="login-box">
-            <h2 style="color:#003366">University Results</h2>
-            <p>Enter details to view Semester Results</p>
-            <input type="text" placeholder="Register Number" id="regNo">
+            <h3>Check Results</h3>
+            <input type="text" placeholder="Register Number" id="reg">
             <input type="text" placeholder="Date of Birth (DD/MM/YYYY)" id="dob">
-            <button onclick="showWhiteScreen()">View Results</button>
+            <button onclick="goToWhite()">Submit</button>
         </div>
     </div>
 
-    <div id="white-screen" onclick="startRoseRain()"></div>
+    <div id="white-screen" onclick="startRoses()"></div>
 
-    <canvas id="canvas"></canvas>
+    <div id="rose-container" onclick="showFinal()"></div>
 
-    <div id="final-message" onclick="location.reload()">
-        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=300&h=300" alt="Our Picture" class="couple-img">
-        <h1 class="romantic-text">Happy Valentine's Day!</h1>
-        <h2 style="color: #ff4d4d; font-size: 3rem;">I Love You So Much ❤️</h2>
-        <p style="font-style: italic;">Will you make me the happiest person forever?</p>
+    <div id="final-reveal">
+        <img src="Snapchat-490814002.jpg" alt="Us" class="couple-img">
+        <div class="message">
+            <h1>Happy Valentine's Day!</h1>
+            <p>I Love You So Much ❤️</p>
+            <div class="hearts">💖 ✨ 🌹 ✨ 💖</div>
+        </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let roses = [];
-        let animationActive = false;
-        let roseCount = 0;
-
-        function showWhiteScreen() {
-            document.getElementById('portal').style.display = 'none';
+        function goToWhite() {
+            document.getElementById('exam-page').style.display = 'none';
             document.getElementById('white-screen').style.display = 'block';
         }
 
-        function startRoseRain() {
-            if (animationActive) {
-                // If clicked while roses are falling, trigger the "blast"
-                document.getElementById('final-message').style.display = 'flex';
-                return;
-            }
-            
-            animationActive = true;
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            function createRose() {
-                return {
-                    x: Math.random() * canvas.width,
-                    y: -20,
-                    size: Math.random() * 20 + 10,
-                    speed: Math.random() * 2 + 1,
-                    rotation: Math.random() * 360
-                };
-            }
+        function startRoses() {
+            document.getElementById('white-screen').style.display = 'none';
+            const container = document.getElementById('rose-container');
+            container.style.display = 'block';
 
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Add new roses until screen starts to feel "filled"
-                if (roseCount < 500) {
-                    roses.push(createRose());
-                    roseCount++;
-                }
+            // Generate roses for 5 seconds
+            const interval = setInterval(() => {
+                const rose = document.createElement('div');
+                rose.classList.add('rose');
+                rose.innerHTML = '🌹';
+                rose.style.left = Math.random() * 100 + 'vw';
+                rose.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                container.appendChild(rose);
 
-                roses.forEach(r => {
-                    r.y += r.speed;
-                    r.rotation += 1;
-                    ctx.font = r.size + "px serif";
-                    ctx.save();
-                    ctx.translate(r.x, r.y);
-                    ctx.rotate(r.rotation * Math.PI / 180);
-                    ctx.fillText("🌹", 0, 0);
-                    ctx.restore();
-                });
+                // Stop creating roses after a bit
+                setTimeout(() => { clearInterval(interval); }, 6000);
+            }, 100);
+        }
 
-                // Once enough roses have fallen, make the screen "clickable" to blast
-                if (roseCount >= 500) {
-                    document.getElementById('white-screen').style.zIndex = 25; // Move trigger to front
-                }
-
-                requestAnimationFrame(draw);
-            }
-            draw();
+        function showFinal() {
+            document.getElementById('rose-container').style.display = 'none';
+            document.getElementById('final-reveal').style.display = 'flex';
         }
     </script>
 </body>
