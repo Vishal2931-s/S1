@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Examination Results Portal</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        /* Phase 1: University Portal */
+        #portal {
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-top: 5px solid #003366;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 320px;
+        }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
+        button { background: #003366; color: white; border: none; padding: 10px 20px; cursor: pointer; width: 100%; }
+
+        /* Phase 2: White Screen */
+        #white-screen {
+            display: none;
+            background: white;
+            height: 100vh;
+            width: 100vw;
+            cursor: pointer;
+            position: absolute;
+            top: 0; z-index: 10;
+        }
+
+        /* Phase 3: Rose Rain */
+        #canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 20; }
+
+        /* Phase 4: Final Message */
+        #final-message {
+            display: none;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: #fff0f5;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            text-align: center;
+            animation: fadeIn 2s;
+        }
+        .couple-img {
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            border: 8px solid #ff4d4d;
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.5);
+        }
+        .romantic-text {
+            font-family: 'Georgia', serif;
+            color: #d63384;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+    </style>
+</head>
+<body>
+
+    <div id="portal">
+        <div class="login-box">
+            <h2 style="color:#003366">University Results</h2>
+            <p>Enter details to view Semester Results</p>
+            <input type="text" placeholder="Register Number" id="regNo">
+            <input type="text" placeholder="Date of Birth (DD/MM/YYYY)" id="dob">
+            <button onclick="showWhiteScreen()">View Results</button>
+        </div>
+    </div>
+
+    <div id="white-screen" onclick="startRoseRain()"></div>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="final-message" onclick="location.reload()">
+        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=300&h=300" alt="Our Picture" class="couple-img">
+        <h1 class="romantic-text">Happy Valentine's Day!</h1>
+        <h2 style="color: #ff4d4d; font-size: 3rem;">I Love You So Much ❤️</h2>
+        <p style="font-style: italic;">Will you make me the happiest person forever?</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let roses = [];
+        let animationActive = false;
+        let roseCount = 0;
+
+        function showWhiteScreen() {
+            document.getElementById('portal').style.display = 'none';
+            document.getElementById('white-screen').style.display = 'block';
+        }
+
+        function startRoseRain() {
+            if (animationActive) {
+                // If clicked while roses are falling, trigger the "blast"
+                document.getElementById('final-message').style.display = 'flex';
+                return;
+            }
+            
+            animationActive = true;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            function createRose() {
+                return {
+                    x: Math.random() * canvas.width,
+                    y: -20,
+                    size: Math.random() * 20 + 10,
+                    speed: Math.random() * 2 + 1,
+                    rotation: Math.random() * 360
+                };
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Add new roses until screen starts to feel "filled"
+                if (roseCount < 500) {
+                    roses.push(createRose());
+                    roseCount++;
+                }
+
+                roses.forEach(r => {
+                    r.y += r.speed;
+                    r.rotation += 1;
+                    ctx.font = r.size + "px serif";
+                    ctx.save();
+                    ctx.translate(r.x, r.y);
+                    ctx.rotate(r.rotation * Math.PI / 180);
+                    ctx.fillText("🌹", 0, 0);
+                    ctx.restore();
+                });
+
+                // Once enough roses have fallen, make the screen "clickable" to blast
+                if (roseCount >= 500) {
+                    document.getElementById('white-screen').style.zIndex = 25; // Move trigger to front
+                }
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+    </script>
+</body>
+</html>
