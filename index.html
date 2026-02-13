@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>University Examination Results</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background: white; }
         
         /* Section 1: The Fake University Page */
         #exam-page {
@@ -16,24 +16,15 @@
             justify-content: center;
             height: 100vh;
             text-align: center;
+            position: relative;
+            z-index: 5;
         }
         .header { background: #003366; color: white; width: 100%; padding: 20px 0; position: absolute; top: 0; }
         .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 300px; }
         input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
         button { background: #003366; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; width: 100%; }
 
-        /* Section 2: The White Screen */
-        #white-screen {
-            display: none;
-            background: white;
-            height: 100vh;
-            width: 100vw;
-            cursor: pointer;
-            position: absolute;
-            top: 0; z-index: 10;
-        }
-
-        /* Section 3: Rose Rain */
+        /* Section 2: Rose Rain & Pile Up */
         #rose-container {
             display: none;
             position: absolute;
@@ -42,17 +33,30 @@
             z-index: 20;
             overflow: hidden;
             cursor: pointer;
+            transition: transform 0.6s ease-in, opacity 0.6s ease-in;
         }
+        
         .rose {
             position: absolute;
-            font-size: 30px;
+            font-size: 35px;
             user-select: none;
             top: -50px;
-            animation: fall linear forwards;
+            /* Animation stops at the bottom and stays there */
+            animation: fall linear forwards; 
         }
-        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
 
-        /* Section 4: The Final Reveal */
+        @keyframes fall { 
+            to { transform: translateY(92vh) rotate(360deg); } 
+        }
+
+        /* The "Blast" Effect */
+        .blast-effect {
+            transform: scale(3);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Section 3: The Final Reveal */
         #final-reveal {
             display: none;
             position: absolute;
@@ -78,11 +82,10 @@
         .message {
             text-align: center;
             color: #d63384;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
         .message h1 { font-size: 3rem; margin: 0; font-family: 'Georgia', serif; }
         .message p { font-size: 1.5rem; font-weight: bold; }
-        .hearts { font-size: 2rem; }
     </style>
 </head>
 <body>
@@ -94,15 +97,13 @@
         </div>
         <div class="login-box">
             <h3>Check Results</h3>
-            <input type="text" placeholder="Register Number" id="reg">
-            <input type="text" placeholder="Date of Birth (DD/MM/YYYY)" id="dob">
-            <button onclick="goToWhite()">Submit</button>
+            <input type="text" placeholder="Register Number">
+            <input type="text" placeholder="Date of Birth (DD/MM/YYYY)">
+            <button onclick="startSurprise()">Submit</button>
         </div>
     </div>
 
-    <div id="white-screen" onclick="startRoses()"></div>
-
-    <div id="rose-container" onclick="showFinal()"></div>
+    <div id="rose-container" onclick="blastRoses()"></div>
 
     <div id="final-reveal">
         <img src="Snapchat-490814002.jpg" alt="Us" class="couple-img">
@@ -114,34 +115,43 @@
     </div>
 
     <script>
-        function goToWhite() {
-            document.getElementById('exam-page').style.display = 'none';
-            document.getElementById('white-screen').style.display = 'block';
-        }
+        let roseInterval;
 
-        function startRoses() {
-            document.getElementById('white-screen').style.display = 'none';
+        function startSurprise() {
+            // Hide login, show rose container
+            document.getElementById('exam-page').style.display = 'none';
             const container = document.getElementById('rose-container');
             container.style.display = 'block';
 
-            // Generate roses for 5 seconds
-            const interval = setInterval(() => {
+            // Start raining roses that stay at the bottom
+            roseInterval = setInterval(() => {
                 const rose = document.createElement('div');
                 rose.classList.add('rose');
                 rose.innerHTML = '🌹';
-                rose.style.left = Math.random() * 100 + 'vw';
-                rose.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                
+                // Randomize positions
+                rose.style.left = Math.random() * 95 + 'vw';
+                // Randomize speed so they pile up unevenly (more natural)
+                rose.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                
                 container.appendChild(rose);
-
-                // Stop creating roses after a bit
-                setTimeout(() => { clearInterval(interval); }, 6000);
-            }, 100);
+            }, 60); // Creates a rose every 60ms for a quick fill
         }
 
-        function showFinal() {
-            document.getElementById('rose-container').style.display = 'none';
-            document.getElementById('final-reveal').style.display = 'flex';
+        function blastRoses() {
+            clearInterval(roseInterval); // Stop creating new ones
+            const container = document.getElementById('rose-container');
+            
+            // Apply the blast class
+            container.classList.add('blast-effect');
+
+            // Wait for the blast animation, then show final reveal
+            setTimeout(() => {
+                container.style.display = 'none';
+                document.getElementById('final-reveal').style.display = 'flex';
+            }, 600);
         }
     </script>
 </body>
 </html>
+
